@@ -9,6 +9,8 @@
       "16": "favicon.ico"
     }
   },
-  "permissions": ["storage"]
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://libretranslate.de/*"
+  ]
 }
-

@@ -22,8 +22,9 @@ async function translate() {
   error.value = ''
   result.value = ''
   try {
-    // 使用 LibreTranslate 免費 API 範例
-    const res = await fetch('https://libretranslate.de/translate', {
+    // 嘗試使用更穩定的 LibreTranslate 節點
+    const apiUrl = 'https://translate.argosopentech.com/translate'
+    const res = await fetch(apiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -33,14 +34,19 @@ async function translate() {
         format: 'text'
       })
     })
+    if (!res.ok) {
+      const errText = await res.text()
+      error.value = `API 錯誤: ${res.status} ${res.statusText} - ${errText}`
+      return
+    }
     const data = await res.json()
     if (data.translatedText) {
       result.value = data.translatedText
     } else {
-      error.value = '翻譯失敗'
+      error.value = '翻譯失敗: ' + JSON.stringify(data)
     }
   } catch (e) {
-    error.value = 'API 請求錯誤'
+    error.value = 'API 請求錯誤: ' + (e && e.message ? e.message : e)
   } finally {
     loading.value = false
   }
