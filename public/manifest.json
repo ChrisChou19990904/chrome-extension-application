@@ -12,5 +12,8 @@
   "permissions": ["storage"],
   "host_permissions": [
     "https://libretranslate.de/*"
-  ]
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
 }
