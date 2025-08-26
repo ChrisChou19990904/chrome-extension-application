@@ -22,33 +22,27 @@ async function translate() {
   error.value = ''
   result.value = ''
   try {
-    // 嘗試使用更穩定的 LibreTranslate 節點
-    const apiUrl = 'https://translate.argosopentech.com/translate'
-    const res = await fetch(apiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        q: text.value,
-        source: 'auto',
-        target: targetLang.value,
-        format: 'text'
-      })
-    })
-    if (!res.ok) {
-      const errText = await res.text()
-      error.value = `API 錯誤: ${res.status} ${res.statusText} - ${errText}`
-      return
-    }
-    const data = await res.json()
-    if (data.translatedText) {
-      result.value = data.translatedText
-    } else {
-      error.value = '翻譯失敗: ' + JSON.stringify(data)
-    }
+    // 改為透過 background script 代理 API 請求
+    chrome.runtime.sendMessage(
+      {
+        type: 'TRANSLATE',
+        text: text.value,
+        targetLang: targetLang.value
+      },
+      (response) => {
+        loading.value = false
+        if (response && response.result) {
+          result.value = response.result
+        } else if (response && response.error) {
+          error.value = response.error
+        } else {
+          error.value = '無法取得翻譯結果，請檢查網路或 API 狀態'
+        }
+      }
+    )
   } catch (e) {
-    error.value = 'API 請求錯誤: ' + (e && e.message ? e.message : e)
-  } finally {
     loading.value = false
+    error.value = 'API 請求錯誤: ' + (e && e.message ? e.message : e)
   }
 }
 </script>
