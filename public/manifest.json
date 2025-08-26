@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Vue Translator",
+  "version": "1.0",
+  "description": "A simple translation extension using Vue",
+  "action": {
+    "default_popup": "index.html",
+    "default_icon": {
+      "16": "favicon.ico"
+    }
+  },
+  "permissions": ["storage"]
+}
+
